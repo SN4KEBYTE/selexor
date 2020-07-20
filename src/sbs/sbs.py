@@ -1,8 +1,8 @@
+from collections import OrderedDict
 from itertools import combinations
 from typing import Tuple, List
 
 import numpy as np
-from sklearn.base import BaseEstimator
 from sklearn.base import clone
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -25,33 +25,31 @@ class SBS:
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
                                                             random_state=self.__random_state)
 
-        dim = x_train.shape[1]
+        dim: int = x_train.shape[1]
         self.__indices = tuple(range(dim))
         self.__subsets = [self.__indices]
 
-        score = self.__calculate_score(x_train, y_train, x_test, y_test, self.__indices)
+        score: float = self.__calculate_score(x_train, y_train, x_test, y_test, self.__indices)
         self.__scores = [score]
 
         while dim > self.__k_features:
-            scores = []
-            subsets = []
+            scores: List[float, ...] = []
+            subsets: List[Tuple[int, ...]] = []
 
             for p in combinations(self.__indices, dim - 1):
                 score = self.__calculate_score(x_train, y_train, x_test, y_test, p)
                 scores.append(score)
                 subsets.append(p)
 
-            best = np.argmax(scores)
+            best: np.ndarray = np.argmax(scores)
             self.__indices = subsets[best]
             self.__subsets.append(self.__indices)
             dim -= 1
 
             self.__scores.append(scores[best])
 
-        print(self.__indices)
-        print(self.__subsets)
-
-        return self
+        return OrderedDict(sorted({len(s): (s, self.__scores[i]) for i, s in enumerate(self.__subsets)}.items(),
+                                  key=lambda t: t[0]))
 
     def __transform(self, x):
         return x[:, self.__indices]
