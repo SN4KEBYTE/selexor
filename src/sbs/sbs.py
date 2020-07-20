@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import combinations
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 
 import numpy as np
 from sklearn.base import clone
@@ -10,11 +10,11 @@ from sklearn.model_selection import train_test_split
 
 # todo: find a right way to type hint estimator
 class SBS:
-    def __init__(self, estimator, k_features: int, scoring: callable = accuracy_score,
+    def __init__(self, estimator, k_features: int, scoring: Callable = accuracy_score,
                  test_size: float = 0.3, random_state: int = 1) -> None:
         self.__estimator = clone(estimator)
         self.__k_features: int = k_features
-        self.__scoring: callable = scoring
+        self.__scoring: Callable = scoring
         self.__test_size: float = test_size
         self.__random_state: int = random_state
         self.__indices: Tuple[int, ...] = ()
