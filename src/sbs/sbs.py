@@ -21,6 +21,7 @@ class SBS:
         self.__subsets: List[Tuple[int, ...]] = []
         self.__scores: List[int, ...] = []
 
+    # todo: find a way to type hint return value type without conflicts
     def fit(self, x, y):
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
                                                             random_state=self.__random_state)
@@ -41,7 +42,7 @@ class SBS:
                 scores.append(score)
                 subsets.append(p)
 
-            best: np.ndarray = np.argmax(scores)
+            best: np.int64 = np.argmax(scores)
             self.__indices = subsets[best]
             self.__subsets.append(self.__indices)
             dim -= 1
