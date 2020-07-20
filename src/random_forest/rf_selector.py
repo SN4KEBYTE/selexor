@@ -17,18 +17,19 @@ class RFSelector:
 
     def plot(self, feat_labels: np.ndarray, fig_size, *args, title: str = 'Importances',
              color: str = 'green', align: str = 'center', **kwargs) -> plt.figure:
-        if self.__importances is None:
-            self.select()
-
-        fig, ax = plt.subplots(figsize=fig_size)
-        fig.tight_layout()
-
-        ax.set_title(title)
+        # if self.__importances is None:
+        #     self.select()
+        #
+        # fig, ax = plt.subplots(figsize=fig_size)
+        # fig.tight_layout()
+        #
+        # ax.set_title(title)
         # ax.set_xticks(range(self.__x_train.shape[1]), feat_labels[self.__indices])
         # ax.set_xlim([-1, self.__x_train.shape[1]])
-        ax.bar(range(self.__x_train.shape[1]), self.__importances[self.__indices], color=color, align=align)
+        # ax.bar(range(self.__x_train.shape[1]), self.__importances[self.__indices], color=color, align=align)
 
-        return fig
+        # return fig
+        pass
 
     def select(self) -> np.ndarray:
         if self.__importances is None:
