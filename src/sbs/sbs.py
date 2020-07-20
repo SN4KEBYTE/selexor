@@ -51,12 +51,13 @@ class SBS:
         return OrderedDict(sorted({len(s): (s, self.__scores[i]) for i, s in enumerate(self.__subsets)}.items(),
                                   key=lambda t: t[0]))
 
-    def __transform(self, x):
-        return x[:, self.__indices]
+    @staticmethod
+    def __transform(x: np.ndarray, indices: Tuple[int, ...]) -> np.ndarray:
+        return x[:, indices]
 
     def __calculate_score(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_test: np.ndarray,
                           indices: Tuple[int, ...]) -> float:
-        self.__estimator.fit(x_train[:, indices], y_train)
-        y_pred = self.__estimator.predict(x_test[:, indices])
+        self.__estimator.fit(self.__transform(x_train, indices), y_train)
+        y_pred = self.__estimator.predict(self.__transform(x_test, indices))
 
         return self.__scoring(y_test, y_pred)
