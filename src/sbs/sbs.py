@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import combinations
-from typing import Tuple, List, Callable
+from typing import Tuple, List, Callable, OrderedDict as OrdDict
 
 import numpy as np
 from sklearn.base import clone
@@ -10,8 +10,22 @@ from sklearn.model_selection import train_test_split
 
 # todo: find a right way to type hint estimator
 class SBS:
-    def __init__(self, estimator, k_features: int, scoring: Callable = accuracy_score,
-                 test_size: float = 0.3, random_state: int = 1) -> None:
+    def __init__(self, estimator, k_features: int, *args, scoring: Callable = accuracy_score,
+                 test_size: float = 0.3, random_state: int = 1, **kwargs) -> None:
+        """
+        Initialize the class with some values.
+
+        :param estimator: the estimator for which you want to select features.
+        :param k_features: desired number of features.
+        :param args: variable length argument list.
+        :param scoring: accuracy classification score.
+        :param test_size: represents the proportion of the dataset to include in the test split.
+        :param random_state: controls the shuffling applied to the data before applying the split.
+        :param kwargs: arbitary keyword arguments.
+
+        :return: None
+        """
+
         self.__estimator = clone(estimator)
         self.__k_features: int = k_features
         self.__scoring: Callable = scoring
@@ -22,7 +36,16 @@ class SBS:
         self.__scores: List[int, ...] = []
 
     # todo: find a way to type hint return value type without conflicts
-    def fit(self, x, y):
+    def fit(self, x: np.ndarray, y: np.ndarray) -> OrdDict[int, Tuple[List[Tuple[int, ...]], float]]:
+        """
+        A method that fits the dataset in order to select features.
+
+        :param x: features.
+        :param y: class labels.
+
+        :return: OrderedDict with the most perspective feature sets.
+        """
+
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
                                                             random_state=self.__random_state)
 
@@ -54,10 +77,31 @@ class SBS:
 
     @staticmethod
     def __transform(x: np.ndarray, indices: Tuple[int, ...]) -> np.ndarray:
+        """
+        An auxiliary function which takes definite columns from NumPy array.
+
+        :param x: array to be transformed.
+        :param indices: indices of required columns.
+
+        :return: transformed array.
+        """
+
         return x[:, indices]
 
     def __calculate_score(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_test: np.ndarray,
                           indices: Tuple[int, ...]) -> float:
+        """
+        A function that calculates classification score on provided features.
+
+        :param x_train: train samples.
+        :param y_train: train class labels.
+        :param x_test: test samples.
+        :param y_test: test class labels.
+        :param indices: indices of features for which you want to calculate score.
+
+        :return: classification score.
+        """
+
         self.__estimator.fit(self.__transform(x_train, indices), y_train)
         y_pred = self.__estimator.predict(self.__transform(x_test, indices))
 
