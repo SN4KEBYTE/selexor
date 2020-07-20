@@ -20,7 +20,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 
 knn = KNeighborsClassifier(n_neighbors=2)
 sbs = SBS(knn, 5)
-sbs.fit(X_train, y_train)
+res = sbs.fit(X_train, y_train)
+
+print(res)
 
 # RFSelector returns indices of the most important features...
 # rf_selector = RFSelector({'n_estimators': 10000, 'random_state': 0, 'n_jobs': -1}, 5, X_train, y_train)
