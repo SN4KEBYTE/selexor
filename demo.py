@@ -1,7 +1,9 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.preprocessing import StandardScaler
 
+from src.pca.pca import PCA
 from src.random_forest.rf_selector import RFSelector
 from src.sbs.sbs import SBS
 
@@ -29,3 +31,10 @@ features = list(rf_selector.select())
 
 # ...but you can easily get access to their names
 print(df.columns[1:][features])
+
+sc = StandardScaler()
+X_train_std = sc.fit_transform(X_train)
+X_test_std = sc.transform(X_train)
+
+pca = PCA(2)
+pca.fit(X_train_std)
