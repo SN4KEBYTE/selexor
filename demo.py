@@ -3,9 +3,9 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
-from src.pca.pca import PCA
-from src.random_forest.rf_selector import RFSelector
-from src.sbs.sbs import SBS
+from src.extracion.pca.pca import PCA
+from src.selection.random_forest import RFSelector
+from src.selection.sbs import SBS
 
 # we will use Wine dataset as an example
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data'
