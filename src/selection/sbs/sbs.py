@@ -3,6 +3,8 @@ from itertools import combinations
 from typing import Tuple, List, Callable, OrderedDict as OrdDict
 
 import numpy as np
+from nptyping import Number
+from nptyping.ndarray import NDArray
 from sklearn.base import clone
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -36,7 +38,7 @@ class SBS:
         self.__scores: List[int, ...] = []
 
     # todo: find a way to type hint return value type without conflicts
-    def fit(self, x: np.ndarray, y: np.ndarray) -> OrdDict[int, Tuple[List[Tuple[int, ...]], float]]:
+    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> OrdDict[int, Tuple[List[Tuple[int, ...]], float]]:
         """
         A method that fits the dataset in order to select features.
 
@@ -76,7 +78,7 @@ class SBS:
                                   key=lambda t: t[0]))
 
     @staticmethod
-    def __transform(x: np.ndarray, indices: Tuple[int, ...]) -> np.ndarray:
+    def __transform(x: NDArray[Number], indices: Tuple[int, ...]) -> NDArray[Number]:
         """
         An auxiliary function which takes definite columns from NumPy array.
 
@@ -88,7 +90,7 @@ class SBS:
 
         return x[:, indices]
 
-    def __calculate_score(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray, y_test: np.ndarray,
+    def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number], y_test: NDArray[Number],
                           indices: Tuple[int, ...]) -> float:
         """
         A function that calculates classification score on provided features.
