@@ -30,15 +30,13 @@ class LDA(Extractor):
             s_b += n * (mean_vec - mean_overall).dot((mean_vec - mean_overall).T)
 
         eigen_vals, eigen_vecs = np.linalg.eig(np.linalg.inv(s_w).dot(s_b))
-        eigen_pairs = sorted([(np.abs(eigen_vals[i]), eigen_vecs[:, i]) for i in range(len(eigen_vals))],
-                             key=lambda k: k[0], reverse=True)
 
-        new_features = [eigen_pairs[i][1][:, np.newaxis].real for i in range(self._k)]
-        self._w = np.hstack(new_features)
+        self._calculate_variance_explained(eigen_vals)
+        self._calculate_projection_matrix(eigen_vals, eigen_vecs)
 
         return self
 
-    def fit_transform(self, x_train: np.ndarray, y_train: np.ndarray) -> np.ndarray:
-        self.fit(x_train, y_train)
+    def fit_transform(self, x: np.ndarray, y_train: np.ndarray) -> np.ndarray:
+        self.fit(x, y_train)
 
-        return self.transform(x_train)
+        return self.transform(x)
