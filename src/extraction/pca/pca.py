@@ -2,7 +2,7 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from src.extracion.extractor import Extractor
+from src.extraction.extractor import Extractor
 
 
 class PCA(Extractor):
