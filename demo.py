@@ -3,9 +3,11 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
-from src.extracion.pca.pca import PCA
-from src.selection.random_forest import RFSelector
-from src.selection.sbs import SBS
+from selexor.extraction.lda.lda import LDA
+from selexor.extraction.pca.kernel_pca import KernelPCA
+from selexor.extraction.pca.pca import PCA
+from selexor.extraction.linear_extractor import LinearExtractor
+from selexor.extraction.kernel_extractor import KernelExtractor
 
 # we will use Wine dataset as an example
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data'
@@ -21,20 +23,32 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # let's create a classifier
 knn = KNeighborsClassifier(n_neighbors=2)
 
-# SBS returns an OrderedDict. Feel free to pick any feature set you want.
-sbs = SBS(knn, 5)
-features_sbs = sbs.fit(X_train, y_train)
-
-# RFSelector returns indices of the most important features...
-rf_selector = RFSelector({'n_estimators': 10000, 'random_state': 0, 'n_jobs': -1}, 5, X_train, y_train)
-features = list(rf_selector.select())
-
-# ...but you can easily get access to their names
-print(df.columns[1:][features])
+# # SBS returns an OrderedDict. Feel free to pick any feature set you want.
+# sbs = SBS(knn, 5)
+# features_sbs = sbs.fit(X_train, y_train)
+#
+# # RFSelector returns indices of the most important features...
+# rf_selector = RFSelector({'n_estimators': 10000, 'random_state': 0, 'n_jobs': -1}, 5, X_train, y_train)
+# features = list(rf_selector.select())
+#
+# # ...but you can easily get access to their names
+# print(df.columns[1:][features])
 
 sc = StandardScaler()
 X_train_std = sc.fit_transform(X_train)
 X_test_std = sc.transform(X_train)
 
-pca = PCA(2)
-pca.fit(X_train_std)
+# k_pca = KernelPCA(2, 15)
+# k_pca.fit(X_train_std)
+#
+# x_test_transformed = k_pca.transform(X_test_std, X_train_std)
+# print(x_test_transformed)
+# print(x_test_transformed.shape)
+
+# lda = LDA(2)
+# lda.fit(X_train_std, y_train)
+# print(lda.projection_matrix)
+#
+# pca = PCA(2)
+# pca.fit(X_train_std)
+# print(pca.projection_matrix)

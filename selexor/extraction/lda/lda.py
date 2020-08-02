@@ -4,7 +4,7 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from src.extraction.linear_extractor import LinearExtractor
+from selexor.extraction.linear_extractor import LinearExtractor
 
 
 class LDA(LinearExtractor):
