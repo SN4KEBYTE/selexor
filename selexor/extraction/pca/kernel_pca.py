@@ -5,7 +5,7 @@ from nptyping import Number
 from nptyping.ndarray import NDArray
 from scipy.spatial.distance import pdist, squareform
 
-from selexor.extraction.kernel_extractor import KernelExtractor
+from selexor.core.kernel_extractor import KernelExtractor
 
 
 class KernelPCA(KernelExtractor):

@@ -5,7 +5,7 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from selexor.extraction.base_extractor import BaseExtractor
+from selexor.core.base_extractor import BaseExtractor
 
 
 class KernelExtractor(BaseExtractor, ABC):
