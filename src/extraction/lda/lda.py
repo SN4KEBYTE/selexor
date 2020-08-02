@@ -4,13 +4,12 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from src.extraction.extractor import Extractor
+from src.extraction.linear_extractor import LinearExtractor
 
 
-class LDA(Extractor):
+class LDA(LinearExtractor):
     def __init__(self, k: int) -> None:
         super(LDA, self).__init__(k)
-        self.__scaler = None
 
     def fit(self, x_train: NDArray[Number], y_train: NDArray[Number]) -> 'LDA':
         labels: NDArray[Number] = np.sort(np.unique(y_train))

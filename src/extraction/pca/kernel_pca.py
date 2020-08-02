@@ -1,23 +1,23 @@
-from typing import Callable, Dict, List
+from typing import List
 
 import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 from scipy.spatial.distance import pdist, squareform
 
+from src.extraction.kernel_extractor import KernelExtractor
 
-class KernelPCA:
-    def __init__(self, k: int, gamma: float, kernel: str = 'rbf') -> None:
-        self.__k: int = k
-        self.__gamma: gamma = gamma
-        self.__kernel_func: Callable = self.__get_kernel(kernel)
+
+class KernelPCA(KernelExtractor):
+    def __init__(self, n_components: int, gamma: float, kernel: str = 'rbf') -> None:
+        super(KernelPCA, self).__init__(n_components, gamma, kernel)
         self.__alphas: NDArray[Number] or None = None
         self.__lambdas: List or None = None
 
     def fit(self, x_train: NDArray[Number]) -> 'KernelPCA':
         mat_dists: NDArray[Number] = squareform(pdist(x_train, 'sqeuclidean'))
 
-        k: NDArray[Number] = self.__kernel_func(mat_dists)
+        k: NDArray[Number] = self._kernel_func(mat_dists)
 
         n: int = k.shape[0]
         ones_mat: NDArray[Number] = np.ones((n, n)) / n
@@ -25,14 +25,14 @@ class KernelPCA:
 
         eigen_vals, eigen_vecs = np.linalg.eigh(k)
 
-        self.__alphas = np.column_stack((eigen_vecs[:, -i]) for i in range(1, self.__k + 1))
-        self.__lambdas = [eigen_vals[-i] for i in range(1, self.__k + 1)]
+        self.__alphas = np.column_stack((eigen_vecs[:, -i]) for i in range(1, self._n_components + 1))
+        self.__lambdas = [eigen_vals[-i] for i in range(1, self._n_components + 1)]
 
         return self
 
     def __project_point(self, point: NDArray[Number], x_train: NDArray[Number]) -> NDArray[Number]:
         dist: NDArray[Number] = np.array([np.sum(point - row) ** 2 for row in x_train])
-        k: NDArray[Number] = self.__kernel_func(dist)
+        k: NDArray[Number] = self._kernel_func(dist)
 
         return k.dot(self.__alphas / self.__lambdas)
 
@@ -45,14 +45,6 @@ class KernelPCA:
         self.fit(x_train)
 
         return self.transform(x, x_train)
-
-    def __get_kernel(self, kernel: str) -> Callable:
-        kernels: Dict = {'rbf': self.__rbf}
-
-        return kernels[kernel]
-
-    def __rbf(self, mat_dists: NDArray[Number]) -> NDArray[Number]:
-        return np.exp(-self.__gamma * mat_dists)
 
     @property
     def alphas(self):

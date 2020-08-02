@@ -2,10 +2,10 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from src.extraction.extractor import Extractor
+from src.extraction.linear_extractor import LinearExtractor
 
 
-class PCA(Extractor):
+class PCA(LinearExtractor):
     def __init__(self, k: int) -> None:
         super(PCA, self).__init__(k)
 
