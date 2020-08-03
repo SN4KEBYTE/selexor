@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Callable, Dict
 
 import numpy as np
 from nptyping import Number
@@ -11,32 +11,29 @@ from selexor.core.selectors.selector import Selector
 
 class RFSelector(Selector):
     def __init__(self, n_components: int, estimator_params: Dict,
-                 scoring: callable = accuracy_score) -> None:
+                 scoring: Callable = accuracy_score) -> None:
         super(RFSelector, self).__init__(n_components, scoring)
-        self.__forest = RandomForestClassifier(**estimator_params)
-        self.__importances = None
+        self.__forest: RandomForestClassifier = RandomForestClassifier(**estimator_params)
+        self.__importances: NDArray[Number] or None = None
 
     def fit(self, x_train: NDArray[Number], y_train: NDArray[Number]) -> 'RFSelector':
         self.__forest.fit(x_train, y_train)
-        self.__importances = self.__forest.feature_importances_
-        self._indices = np.argsort(self.__importances)[::-1]
+        self.__importances: NDArray[Number] = self.__forest.feature_importances_
+        self._indices: NDArray[Number] = np.argsort(self.__importances)[::-1]
 
         return self
 
-    def transform(self) -> NDArray[Number]:
-        pass
-
-    def fit_transform(self) -> NDArray[Number]:
-        pass
-
-    def select(self) -> np.ndarray:
+    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
         if self.__importances is None:
-            self.__forest.fit(self.__x_train, self.__y_train)
-            self.__importances = self.__forest.feature_importances_
-            self._indices = np.argsort(self.__importances)[::-1]
+            raise RuntimeError('Feature importances are not calculated. Please use fit method first, or fit_transform.')
 
-        return self.__indices[:self.__k_features]
+        return self._indices[:self._n_components]
+
+    def fit_transform(self, x_train: NDArray[Number], y_train: NDArray[Number]) -> NDArray[Number]:
+        self.fit(x_train, y_train)
+
+        return self.transform(x_train)
 
     @property
-    def features_importances(self):
+    def features_importances(self) -> NDArray[Number]:
         return self.__importances
