@@ -3,12 +3,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
-from selexor.extraction.lda.lda import LDA
-from selexor.extraction.pca.kernel_pca import KernelPCA
-from selexor.extraction.pca.pca import PCA
-from selexor.extraction.linear_extractor import LinearExtractor
-from selexor.extraction.kernel_extractor import KernelExtractor
-
 # we will use Wine dataset as an example
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data'
 df = pd.read_csv(url, header=None)

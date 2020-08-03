@@ -2,7 +2,7 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from selexor.core.linear_extractor import LinearExtractor
+from selexor.core.extractors.linear_extractor import LinearExtractor
 
 
 class PCA(LinearExtractor):

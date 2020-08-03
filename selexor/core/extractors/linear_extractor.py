@@ -5,10 +5,10 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from selexor.core.base_extractor import BaseExtractor
+from selexor.core.base.base import Base
 
 
-class LinearExtractor(BaseExtractor, ABC):
+class LinearExtractor(Base, ABC):
     def __init__(self, n_components: int) -> None:
         super(LinearExtractor, self).__init__(n_components)
         self._w: NDArray[Number] or None = None

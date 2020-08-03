@@ -5,10 +5,10 @@ import numpy as np
 from nptyping import Number
 from nptyping.ndarray import NDArray
 
-from selexor.core.base_extractor import BaseExtractor
+from selexor.core.base.base import Base
 
 
-class KernelExtractor(BaseExtractor, ABC):
+class KernelExtractor(Base, ABC):
     def __init__(self, n_components: int, gamma: float = 1.0, kernel: str = 'rbf') -> None:
         super(KernelExtractor, self).__init__(n_components)
         self._gamma = gamma

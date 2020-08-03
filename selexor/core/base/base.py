@@ -4,7 +4,7 @@ from nptyping import Number
 from nptyping.ndarray import NDArray
 
 
-class BaseExtractor(ABC):
+class Base(ABC):
     def __init__(self, n_components: int) -> None:
         self._n_components: int = n_components
 
