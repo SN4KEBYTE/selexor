@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import combinations
-from typing import List, Callable, OrderedDict as OrdDict
+from typing import Any, List, OrderedDict as OrdDict, Optional
 
 import numpy as np
 from nptyping import Number, Int
@@ -10,12 +10,12 @@ from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
 from selexor.core.selectors.selector import Selector
+from selexor.core.selectors.types import AccuracyScore
 from selexor.sbs.types import Subset, FeatureSet
 
 
-# todo: find a right way to type hint estimator
 class SBS(Selector):
-    def __init__(self, estimator, n_components: int, scoring: Callable = accuracy_score,
+    def __init__(self, estimator: Any, n_components: int, scoring: AccuracyScore = accuracy_score,
                  test_size: float = 0.3, random_state: int = 0) -> None:
         """
         Initialize the class with some values.
@@ -29,19 +29,17 @@ class SBS(Selector):
         """
 
         super(SBS, self).__init__(n_components, scoring)
-
-        self.__estimator = clone(estimator)
+        self.__estimator: Any = clone(estimator)
         self.__test_size: float = test_size
         self.__random_state: int = random_state
-        self.__indices: Subset or None = None
-        self.__subsets: List[Subset] or None = None
-        self.__scores: List[int, ...] or None = None
-        self.__feature_sets: OrdDict[int, FeatureSet] or None = None
+        self.__feature_sets: Optional[OrdDict[int, FeatureSet]] = None
+        self.__indices: Optional[Subset] = None
 
-    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'SBS':
+    def fit(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> 'SBS':
         """
         A method that fits the dataset in order to select features.
 
+        :param option: todo
         :param x: features.
         :param y: class labels.
 
@@ -52,31 +50,33 @@ class SBS(Selector):
                                                             random_state=self.__random_state)
 
         dim: int = x_train.shape[1]
-        self.__indices = tuple(range(dim))
-        self.__subsets = [self.__indices]
+        indices: Subset = tuple(range(dim))
+        best_subsets: List[Subset] = [indices]
 
-        score: float = self.__calculate_score(x_train, y_train, x_test, y_test, self.__indices)
-        self.__scores = [score]
+        score: float = self.__calculate_score(x_train, y_train, x_test, y_test, indices)
+        best_scores = [score]
 
         while dim > self._n_components:
-            scores: List[float, ...] = []
+            scores: List[float] = []
             subsets: List[Subset] = []
 
-            for p in combinations(self.__indices, dim - 1):
+            for p in combinations(indices, dim - 1):
                 score = self.__calculate_score(x_train, y_train, x_test, y_test, p)
                 scores.append(score)
                 subsets.append(p)
 
             best: NDArray[Int] = np.argmax(scores)
-            self.__indices = subsets[best]
-            self.__subsets.append(self.__indices)
+            indices = subsets[best]
+            best_subsets.append(indices)
             dim -= 1
 
-            self.__scores.append(scores[best])
+            best_scores.append(scores[best])
 
         self.__feature_sets = OrderedDict(
-            sorted({len(s): (s, self.__scores[i]) for i, s in enumerate(self.__subsets)}.items(),
+            sorted({len(s): (s, best_scores[i]) for i, s in enumerate(best_subsets)}.items(),
                    key=lambda t: t[0]))
+
+        self.select_feature_set(option)
 
         return self
 
@@ -88,8 +88,17 @@ class SBS(Selector):
 
     # todo: this function must select the most perspective feature set (based on size or score).
     # you can't use transform without selecting definite feature set.
-    def select_feature_set(self, option: str = 'score'):
-        pass
+    def select_feature_set(self, option: str = 'score', best: bool = True) -> 'SBS':
+        if option == 'size':
+            funcs = {True: max, False: min}
+
+            self.__indices = self.__feature_sets[funcs[best](self.__feature_sets.keys())][1]
+        else:
+            feature_sets_copy = sorted(self.__feature_sets, key=lambda t: t[1][0])
+
+            self.__indices = feature_sets_copy[0 if best else -1][1]
+
+        return self
 
     @staticmethod
     def __transform(x: NDArray[Number], indices: Subset) -> NDArray[Number]:
@@ -123,3 +132,7 @@ class SBS(Selector):
         y_pred = self.__estimator.predict(self.__transform(x_test, indices))
 
         return self._scoring(y_test, y_pred)
+
+    @property
+    def feature_sets(self):
+        return self.__feature_sets
