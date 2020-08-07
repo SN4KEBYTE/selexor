@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from itertools import combinations
+from operator import itemgetter
 from typing import Any, List, OrderedDict as OrdDict, Optional
 
 import numpy as np
@@ -54,7 +55,7 @@ class SBS(Selector):
         best_subsets: List[Subset] = [indices]
 
         score: float = self.__calculate_score(x_train, y_train, x_test, y_test, indices)
-        best_scores = [score]
+        best_scores: List[float] = [score]
 
         while dim > self._n_components:
             scores: List[float] = []
@@ -80,38 +81,36 @@ class SBS(Selector):
 
         return self
 
-    def transform(self) -> NDArray[Number]:
-        pass
+    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        if self.__feature_sets is None:
+            raise RuntimeError('Feature sets are not calculated. Please use fit method first, or fit_transform.')
 
-    def fit_transform(self) -> NDArray[Number]:
-        pass
+        return x[:, self.__indices]
 
-    # todo: this function must select the most perspective feature set (based on size or score).
-    # you can't use transform without selecting definite feature set.
+    def fit_transform(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> NDArray[Number]:
+        self.fit(x, y, option)
+
+        return self.transform(x)
+
     def select_feature_set(self, option: str = 'score', best: bool = True) -> 'SBS':
         if option == 'size':
             funcs = {True: max, False: min}
 
             self.__indices = self.__feature_sets[funcs[best](self.__feature_sets.keys())][1]
         else:
-            feature_sets_copy = sorted(self.__feature_sets, key=lambda t: t[1][0])
-
-            self.__indices = feature_sets_copy[0 if best else -1][1]
+            # todo: find a way to get subset with the highest score
+            pass
+            # keys = self.__feature_sets.keys()
+            # items = sorted(self.__feature_sets.items(), key=lambda t: t[1])
+            #
+            # tmp = OrderedDict({subset[1]: tuple(subset[0], score) for score, subset in keys, items})
+            # 
+            # print(keys)
+            # print(items)
+            #
+            # # self.__indices = feature_sets_copy[0 if best else -1]
 
         return self
-
-    @staticmethod
-    def __transform(x: NDArray[Number], indices: Subset) -> NDArray[Number]:
-        """
-        An auxiliary function which takes definite columns from NumPy array.
-
-        :param x: array to be transformed.
-        :param indices: indices of required columns.
-
-        :return: transformed array.
-        """
-
-        return x[:, indices]
 
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
                           y_test: NDArray[Number],
@@ -128,8 +127,8 @@ class SBS(Selector):
         :return: classification score.
         """
 
-        self.__estimator.fit(self.__transform(x_train, indices), y_train)
-        y_pred = self.__estimator.predict(self.__transform(x_test, indices))
+        self.__estimator.fit(x_train[:, indices], y_train)
+        y_pred = self.__estimator.predict(x_test[:, indices])
 
         return self._scoring(y_test, y_pred)
 
