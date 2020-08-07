@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from itertools import combinations
-from operator import itemgetter
 from typing import Any, List, OrderedDict as OrdDict, Optional
 
 import numpy as np
@@ -41,10 +40,10 @@ class SBS(Selector):
         A method that fits the dataset in order to select features.
 
         :param option: todo
-        :param x: features.
+        :param x: samples.
         :param y: class labels.
 
-        :return: OrderedDict with the most perspective feature sets.
+        :return: the most perspective feature sets.
         """
 
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
@@ -82,12 +81,31 @@ class SBS(Selector):
         return self
 
     def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that applies dimensionality reduction to a given array.
+
+        :param x: samples.
+        :return: features projected onto a new space.
+
+        :raises: RuntimeError: thrown when feature sets are not calculated. In this case you need to use fit method
+                               first (or fit_transform).
+        """
+
         if self.__feature_sets is None:
             raise RuntimeError('Feature sets are not calculated. Please use fit method first, or fit_transform.')
 
         return x[:, self.__indices]
 
     def fit_transform(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> NDArray[Number]:
+        """
+        A method that fits the dataset and applies dimensionality reduction to a given array.
+
+        :param x: samples.
+        :param y: class labels.
+        :param option: todo
+        :return: features projected onto a new space.
+        """
+
         self.fit(x, y, option)
 
         return self.transform(x)
@@ -113,8 +131,7 @@ class SBS(Selector):
         return self
 
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
-                          y_test: NDArray[Number],
-                          indices: Subset) -> float:
+                          y_test: NDArray[Number], indices: Subset) -> float:
         """
         A function that calculates classification score on provided features.
 
@@ -133,5 +150,11 @@ class SBS(Selector):
         return self._scoring(y_test, y_pred)
 
     @property
-    def feature_sets(self):
+    def feature_sets(self) -> Optional[OrdDict[int, FeatureSet]]:
+        """
+        The most perspective feature sets.
+
+        :return: the most perspective feature sets or None in case fit (or fit_transform) was not called.
+        """
+        
         return self.__feature_sets
