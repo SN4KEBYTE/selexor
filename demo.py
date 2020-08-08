@@ -4,6 +4,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
 
 # we will use Wine dataset as an example
+from selexor.sbs.sbs import SBS
+
 url = 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data'
 df = pd.read_csv(url, header=None)
 df.columns = ['Class label', 'Alcohol', 'Malic acid', 'Ash', 'Alcalinity of ash', 'Magnesium', 'Total phenols',
@@ -17,9 +19,9 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_
 # let's create a classifier
 knn = KNeighborsClassifier(n_neighbors=2)
 
-# # SBS returns an OrderedDict. Feel free to pick any feature set you want.
-# sbs = SBS(knn, 5)
-# features_sbs = sbs.fit(X_train, y_train)
+# SBS returns an OrderedDict. Feel free to pick any feature set you want.
+sbs = SBS(knn, 5)
+features_sbs = sbs.fit(X_train, y_train)
 #
 # # RFSelector returns indices of the most important features...
 # rf_selector = RFSelector({'n_estimators': 10000, 'random_state': 0, 'n_jobs': -1}, 5, X_train, y_train)

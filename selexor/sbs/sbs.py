@@ -25,6 +25,7 @@ class SBS(Selector):
         :param scoring: accuracy classification score.
         :param test_size: represents the proportion of the dataset to include in the test split.
         :param random_state: controls the shuffling applied to the data before applying the split.
+
         :return: None
         """
 
@@ -43,7 +44,7 @@ class SBS(Selector):
         :param x: samples.
         :param y: class labels.
 
-        :return: the most perspective feature sets.
+        :return: fitted selector.
         """
 
         x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
@@ -82,9 +83,10 @@ class SBS(Selector):
 
     def transform(self, x: NDArray[Number]) -> NDArray[Number]:
         """
-        A method that applies dimensionality reduction to a given array.
+        A method that transforms the samples by selecting the most important features.
 
         :param x: samples.
+
         :return: features projected onto a new space.
 
         :raises: RuntimeError: thrown when feature sets are not calculated. In this case you need to use fit method
@@ -98,12 +100,13 @@ class SBS(Selector):
 
     def fit_transform(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> NDArray[Number]:
         """
-        A method that fits the dataset and applies dimensionality reduction to a given array.
+        A method that fits the dataset and applies transformation to a given samples.
 
         :param x: samples.
         :param y: class labels.
         :param option: todo
-        :return: features projected onto a new space.
+
+        :return: samples projected onto a new space.
         """
 
         self.fit(x, y, option)
@@ -156,5 +159,5 @@ class SBS(Selector):
 
         :return: the most perspective feature sets or None in case fit (or fit_transform) was not called.
         """
-        
+
         return self.__feature_sets

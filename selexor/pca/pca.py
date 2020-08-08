@@ -6,11 +6,27 @@ from selexor.core.extractors.linear_extractor import LinearExtractor
 
 
 class PCA(LinearExtractor):
-    def __init__(self, k: int) -> None:
-        super(PCA, self).__init__(k)
+    def __init__(self, n_components: int) -> None:
+        """
+        Initialize the class with some values.
 
-    def fit(self, x_train: NDArray[Number]) -> 'PCA':
-        cov_mat: NDArray[Number] = np.cov(x_train.T)
+        :param n_components: desired dimension of the new feature space.
+
+        :return: None
+        """
+
+        super(PCA, self).__init__(n_components)
+
+    def fit(self, x: NDArray[Number]) -> 'PCA':
+        """
+        A method that fits the dataset in order to extract features.
+
+        :param x: samples.
+
+        :return: fitted extractor.
+        """
+
+        cov_mat: NDArray[Number] = np.cov(x.T)
         eigen_vals, eigen_vecs = np.linalg.eigh(cov_mat)
 
         self._calculate_variance_explained(eigen_vals)
@@ -19,6 +35,14 @@ class PCA(LinearExtractor):
         return self
 
     def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that fits the dataset and applies dimensionality reduction to a given samples.
+
+        :param x: samples.
+
+        :return: samples projected onto a new space.
+        """
+
         self.fit(x)
 
         return self.transform(x)
