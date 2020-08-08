@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 import numpy as np
 from nptyping import Number
@@ -10,12 +10,34 @@ from selexor.core.extractors.kernel_extractor import KernelExtractor
 
 class KernelPCA(KernelExtractor):
     def __init__(self, n_components: int, gamma: float, kernel: str = 'rbf') -> None:
-        super(KernelPCA, self).__init__(n_components, gamma, kernel)
-        self.__alphas: NDArray[Number] or None = None
-        self.__lambdas: List or None = None
+        """
+        Initialize the class with some values.
 
-    def fit(self, x_train: NDArray[Number]) -> 'KernelPCA':
-        mat_dists: NDArray[Number] = squareform(pdist(x_train, 'sqeuclidean'))
+        :param n_components: desired dimension of the new feature space.
+        :param gamma: kernel coefficient for RBF.
+        :param kernel: kernel type.
+
+        :return: None
+        """
+
+        super(KernelPCA, self).__init__(n_components, gamma, kernel)
+        self.__x_train: Optional[NDArray[Number]] = None
+        self.__alphas: Optional[NDArray[Number]] = None
+        self.__lambdas: Optional[List] = None
+
+    def fit(self, x: NDArray[Number]) -> 'KernelPCA':
+        """
+        A method that fits the dataset in order to extract features.
+
+        :param x: samples. This dataset will be remembered, because KernelPCA uses training samples to apply
+                  dimensionality reduction to the new samples.
+
+        :return: fitted extractor.
+        """
+
+        self.__x_train = x
+
+        mat_dists: NDArray[Number] = squareform(pdist(x, 'sqeuclidean'))
 
         k: NDArray[Number] = self._kernel_func(mat_dists)
 
@@ -30,26 +52,62 @@ class KernelPCA(KernelExtractor):
 
         return self
 
-    def __project_point(self, point: NDArray[Number], x_train: NDArray[Number]) -> NDArray[Number]:
-        dist: NDArray[Number] = np.array([np.sum(point - row) ** 2 for row in x_train])
+    def __project_sample(self, sample: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that projects one sample to the new feature space.
+
+        :param sample: sample to be projected.
+
+        :return: projected sample.
+        """
+
+        dist: NDArray[Number] = np.array([np.sum(sample - row) ** 2 for row in self.__x_train])
         k: NDArray[Number] = self._kernel_func(dist)
 
         return k.dot(self.__alphas / self.__lambdas)
 
-    def transform(self, x: NDArray[Number], x_train: NDArray[Number]) -> NDArray[Number]:
-        x_transformed = [self.__project_point(row, x_train) for row in x]
+    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that applies dimensionality reduction to a given samples.
+
+        :param x: samples.
+
+        :return: samples projected onto a new space.
+        """
+
+        x_transformed = [self.__project_sample(row) for row in x]
 
         return np.row_stack(x_transformed)
 
-    def fit_transform(self, x: NDArray[Number], x_train: NDArray[Number]) -> NDArray[Number]:
-        self.fit(x_train)
+    def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that fits the dataset and applies dimensionality reduction to a given samples.
 
-        return self.transform(x, x_train)
+        :param x: samples.
+
+        :return: samples projected onto a new space.
+        """
+
+        self.fit(x)
+
+        return self.transform(x)
 
     @property
     def alphas(self):
+        """
+        The biggest n_components eigen values.
+
+        :return: eigen values or None in case fit (or fit_transform) was not called
+        """
+
         return self.__alphas
 
     @property
     def lambdas(self):
+        """
+        Eigen vectors corresponding to the biggest n_components eigen values.
+
+        :return: eigen vectors or None in case fit (or fit_transform) was not called
+        """
+
         return self.__lambdas
