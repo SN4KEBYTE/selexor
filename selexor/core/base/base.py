@@ -9,13 +9,13 @@ class Base(ABC):
         self._n_components: int = n_components
 
     @abstractmethod
-    def fit(self):
+    def fit(self, *args, **kwargs):
         pass
 
     @abstractmethod
-    def transform(self) -> NDArray[Number]:
+    def transform(self, *args, **kwargs) -> NDArray[Number]:
         pass
 
     @abstractmethod
-    def fit_transform(self) -> NDArray[Number]:
+    def fit_transform(self, *args, **kwargs) -> NDArray[Number]:
         pass
