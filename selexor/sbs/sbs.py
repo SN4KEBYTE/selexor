@@ -136,7 +136,7 @@ class SBS(Selector):
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
                           y_test: NDArray[Number], indices: Subset) -> float:
         """
-        A function that calculates classification score on provided features.
+        A method that calculates classification score on provided features.
 
         :param x_train: train samples.
         :param y_train: train class labels.

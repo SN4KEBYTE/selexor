@@ -17,7 +17,7 @@ class Base(ABC):
         self._n_components: int = n_components
 
     @abstractmethod
-    def fit(self, *args, **kwargs) -> 'Base':
+    def fit(self, *args, **kwargs):
         """
         A method that fits the dataset in order to select (or extract) features. This is an abstract method and must be
         implemented in subclasses.

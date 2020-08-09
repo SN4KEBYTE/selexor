@@ -17,7 +17,7 @@ class KernelPCA(KernelExtractor):
         :param gamma: kernel coefficient for RBF.
         :param kernel: kernel type.
 
-        :return: None
+        :return: None.
         """
 
         super(KernelPCA, self).__init__(n_components, gamma, kernel)
@@ -97,7 +97,7 @@ class KernelPCA(KernelExtractor):
         """
         The biggest n_components eigen values.
 
-        :return: eigen values or None in case fit (or fit_transform) was not called
+        :return: eigen values or None in case fit (or fit_transform) was not called.
         """
 
         return self.__alphas
@@ -107,7 +107,7 @@ class KernelPCA(KernelExtractor):
         """
         Eigen vectors corresponding to the biggest n_components eigen values.
 
-        :return: eigen vectors or None in case fit (or fit_transform) was not called
+        :return: eigen vectors or None in case fit (or fit_transform) was not called.
         """
 
         return self.__lambdas

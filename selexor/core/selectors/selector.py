@@ -25,7 +25,7 @@ class Selector(Base, ABC):
         self._indices: Optional[NDArray[Number]] = None
 
     @abstractmethod
-    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'Selector':
+    def fit(self, x: NDArray[Number], y: NDArray[Number]):
         """
         A method that fits the dataset in order to select features. This is an abstract method and must be implemented
         in subclasses.

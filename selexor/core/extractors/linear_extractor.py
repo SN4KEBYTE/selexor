@@ -23,7 +23,7 @@ class LinearExtractor(Base, ABC):
         self._variance_explained: Optional[List] = None
 
     @abstractmethod
-    def fit(*args, **kwargs):
+    def fit(self, *args, **kwargs):
         """
         A method that fits the dataset in order to extract features.
 
@@ -69,7 +69,7 @@ class LinearExtractor(Base, ABC):
     def _calculate_projection_matrix(self, eigen_vals: NDArray[Number], eigen_vecs: NDArray[Number]) -> None:
         """
         A method that calculates projection matrix using eigen values and eigen vectors. Matrix is stored in _w
-        argument.
+        attribute.
 
         :param eigen_vals: eigen values.
         :param eigen_vecs: eigen vectors corresponding to eigen values.
@@ -86,7 +86,7 @@ class LinearExtractor(Base, ABC):
 
     def _calculate_variance_explained(self, eigen_vals: NDArray[Number]) -> None:
         """
-        A method that calculates explained variance using eigen values. It is stored in _variance_explained argument.
+        A method that calculates explained variance using eigen values. It is stored in _variance_explained attribute.
 
         :param eigen_vals: eigen values.
 
