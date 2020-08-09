@@ -10,26 +10,79 @@ from selexor.core.base.base import Base
 
 class KernelExtractor(Base, ABC):
     def __init__(self, n_components: int, gamma: float = 1.0, kernel: str = 'rbf') -> None:
+        """
+        Initialize the class with some values.
+
+        :param n_components: desired dimension of the new feature space.
+        :param gamma: kernel coefficient for RBF.
+        :param kernel: kernel type.
+
+        :return: None.
+        """
+
         super(KernelExtractor, self).__init__(n_components)
         self._gamma = gamma
         self._kernel_func: Callable = self.__get_kernel(kernel)
 
     @abstractmethod
-    def fit(self):
+    def fit(self, x: NDArray[Number]):
+        """
+        A method that fits the dataset in order to extract features. This is an abstract method and
+        must be implemented in subclasses.
+
+        :param x: samples.
+
+        :return: fitted extractor.
+        """
+
         pass
 
     @abstractmethod
-    def transform(self) -> NDArray[Number]:
+    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that applies dimensionality reduction to a given samples. This is an abstract method and
+        must be implemented in subclasses.
+
+        :param x: samples.
+
+        :return: samples projected onto a new space.
+        """
+
         pass
 
     @abstractmethod
-    def fit_transform(self) -> NDArray[Number]:
+    def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that fits the dataset and applies dimensionality reduction to a given samples. This is an abstract
+        method and must be implemented in subclasses.
+
+        :param x: samples.
+
+        :return: samples projected onto a new space.
+        """
+
         pass
 
     def __get_kernel(self, kernel: str) -> Callable:
+        """
+        A method that sets the kernel function.
+
+        :param kernel: kernel type.
+
+        :return: kernel function.
+        """
+
         kernels: Dict = {'rbf': self.__rbf}
 
         return kernels[kernel]
 
     def __rbf(self, mat_dists: NDArray[Number]) -> NDArray[Number]:
+        """
+        Gaussian radial basis function.
+
+        :param mat_dists: distances matrix.
+
+        :return: Gaussian RBF values.
+        """
+
         return np.exp(-self._gamma * mat_dists)
