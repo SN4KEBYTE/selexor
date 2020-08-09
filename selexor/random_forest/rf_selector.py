@@ -21,7 +21,7 @@ class RFSelector(Selector):
                more info.
         :param scoring: accuracy classification score.
 
-        :return: None
+        :return: None.
         """
 
         super(RFSelector, self).__init__(n_components, scoring)
@@ -51,6 +51,9 @@ class RFSelector(Selector):
         :param x: samples.
 
         :return: samples with the most important features.
+
+        :raises: RuntimeError: thrown when the most important features are not calculated. In this case you need to use
+                 fit method first (or fit_transform).
         """
 
         if self.__importances is None:
