@@ -8,26 +8,43 @@ from selexor.core.extractors.linear_extractor import LinearExtractor
 
 
 class LDA(LinearExtractor):
-    def __init__(self, k: int) -> None:
-        super(LDA, self).__init__(k)
+    def __init__(self, n_components: int) -> None:
+        """
+        Initialize the class with some values.
 
-    def fit(self, x_train: NDArray[Number], y_train: NDArray[Number]) -> 'LDA':
-        labels: NDArray[Number] = np.sort(np.unique(y_train))
+        :param n_components: desired dimension of the new feature space.
 
-        mean_vecs: List[NDArray[Number]] = [np.mean(x_train[y_train == label], axis=0) for label in labels]
+        :return: None
+        """
 
-        dim: int = x_train.shape[1]
+        super(LDA, self).__init__(n_components)
+
+    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'LDA':
+        """
+        A method that fits the dataset in order to extract features.
+
+        :param x: samples.
+        :param y: class labels.
+
+        :return: fitted extractor.
+        """
+
+        labels: NDArray[Number] = np.sort(np.unique(y))
+
+        mean_vecs: List[NDArray[Number]] = [np.mean(x[y == label], axis=0) for label in labels]
+
+        dim: int = x.shape[1]
         s_w: NDArray[Number] = np.zeros((dim, dim))
 
         for label, mean_vec in zip(labels, mean_vecs):
-            class_scatter: NDArray[Number] = np.cov(x_train[y_train == label].T)
+            class_scatter: NDArray[Number] = np.cov(x[y == label].T)
             s_w += class_scatter
 
-        mean_overall: NDArray[Number] = np.mean(x_train, axis=0)
+        mean_overall: NDArray[Number] = np.mean(x, axis=0)
         s_b: NDArray[Number] = np.zeros((dim, dim))
 
         for i, mean_vec in enumerate(mean_vecs):
-            n: int = x_train[y_train == i, :].shape[0]
+            n: int = x[y == i, :].shape[0]
             mean_vec: NDArray[Number] = mean_vec.reshape(dim, 1)
             mean_overall: NDArray[Number] = mean_overall.reshape(dim, 1)
             s_b += n * (mean_vec - mean_overall).dot((mean_vec - mean_overall).T)
@@ -39,7 +56,16 @@ class LDA(LinearExtractor):
 
         return self
 
-    def fit_transform(self, x: NDArray[Number], y_train: NDArray[Number]) -> NDArray[Number]:
-        self.fit(x, y_train)
+    def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
+        """
+        A method that fits the dataset and applies dimensionality reduction to a given samples.
+
+        :param x: samples.
+        :param y: class labels.
+
+        :return: samples projected onto a new space.
+        """
+
+        self.fit(x, y)
 
         return self.transform(x)
