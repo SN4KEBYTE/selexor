@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
 import numpy as np
 from nptyping import Number
@@ -10,9 +10,17 @@ from selexor.core.base.base import Base
 
 class LinearExtractor(Base, ABC):
     def __init__(self, n_components: int) -> None:
+        """
+        Initialize the class with some values.
+
+        :param n_components: desired number of features.
+
+        :return: None.
+        """
+
         super(LinearExtractor, self).__init__(n_components)
-        self._w: NDArray[Number] or None = None
-        self._variance_explained: List or None = None
+        self._w: Optional[NDArray[Number]] = None
+        self._variance_explained: Optional[List] = None
 
     @abstractmethod
     def fit(self):
@@ -45,5 +53,5 @@ class LinearExtractor(Base, ABC):
         return self._w
 
     @property
-    def variance_explained(self) -> NDArray[Number]:
+    def variance_explained(self) -> Optional[List]:
         return self._variance_explained
