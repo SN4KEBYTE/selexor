@@ -9,6 +9,10 @@ from selexor.core.base.base import Base
 
 
 class KernelExtractor(Base, ABC):
+    """
+    Abstract base class for all extractors which use kernel trick.
+    """
+
     def __init__(self, n_components: int, gamma: float = 1.0, kernel: str = 'rbf') -> None:
         """
         Initialize the class with some values.

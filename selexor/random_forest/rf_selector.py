@@ -10,6 +10,10 @@ from selexor.core.selectors.selector import Selector
 
 
 class RFSelector(Selector):
+    """
+    Random forest selector.
+    """
+
     def __init__(self, n_components: int, estimator_params: Dict,
                  scoring: Callable = accuracy_score) -> None:
         """

@@ -5,6 +5,10 @@ from nptyping.ndarray import NDArray
 
 
 class Base(ABC):
+    """
+    Abstract base class for all selectors and extractors.
+    """
+
     def __init__(self, n_components: int) -> None:
         """
         Initialize the class with some values.

@@ -8,6 +8,10 @@ from selexor.core.extractors.linear_extractor import LinearExtractor
 
 
 class LDA(LinearExtractor):
+    """
+    Linear discriminant analysis selector.
+    """
+
     def __init__(self, n_components: int) -> None:
         """
         Initialize the class with some values.

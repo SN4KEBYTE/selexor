@@ -10,6 +10,10 @@ from selexor.core.selectors.types import AccuracyScore
 
 
 class Selector(Base, ABC):
+    """
+    Abstract base class for all selectors.
+    """
+
     def __init__(self, n_components: int, scoring: AccuracyScore = accuracy_score) -> None:
         """
         Initialize the class with some values.

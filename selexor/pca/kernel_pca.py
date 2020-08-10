@@ -9,6 +9,10 @@ from selexor.core.extractors.kernel_extractor import KernelExtractor
 
 
 class KernelPCA(KernelExtractor):
+    """
+    Kernel principal component analysis extractor.
+    """
+
     def __init__(self, n_components: int, gamma: float, kernel: str = 'rbf') -> None:
         """
         Initialize the class with some values.
