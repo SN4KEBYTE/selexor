@@ -99,9 +99,9 @@ class KernelPCA(KernelExtractor):
     @property
     def alphas(self):
         """
-        The biggest n_components eigen values.
+        Eigen vectors corresponding to the biggest n_components eigen values.
 
-        :return: eigen values or None in case fit (or fit_transform) was not called.
+        :return: eigen vectors or None in case fit (or fit_transform) was not called.
         """
 
         return self.__alphas
@@ -109,9 +109,9 @@ class KernelPCA(KernelExtractor):
     @property
     def lambdas(self):
         """
-        Eigen vectors corresponding to the biggest n_components eigen values.
+        The biggest n_components eigen values.
 
-        :return: eigen vectors or None in case fit (or fit_transform) was not called.
+        :return: eigen values or None in case fit (or fit_transform) was not called.
         """
 
         return self.__lambdas
