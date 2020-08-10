@@ -1,6 +1,6 @@
 from collections import OrderedDict
 from itertools import combinations
-from typing import Any, List, OrderedDict as OrdDict, Optional
+from typing import Any, List, OrderedDict as OrdDict, Optional, Union
 
 import numpy as np
 from nptyping import Number, Int
@@ -11,12 +11,16 @@ from sklearn.model_selection import train_test_split
 
 from selexor.core.selectors.selector import Selector
 from selexor.core.selectors.types import AccuracyScore
-from selexor.sbs.types import Subset, FeatureSet
+from selexor.sbs.types import Subset, FeatureSet, Proportion, RandomState
+
+POSSIBLE_SELECTION_OPTIONS: List[str] = ['score', 'size']
 
 
 class SBS(Selector):
     def __init__(self, estimator: Any, n_components: int, scoring: AccuracyScore = accuracy_score,
-                 test_size: float = 0.3, random_state: int = 0) -> None:
+                 test_size: Proportion = 0.3,
+                 random_state: RandomState = 0,
+                 option: str = 'score', best: bool = True) -> None:
         """
         Initialize the class with some values.
 
@@ -25,30 +29,48 @@ class SBS(Selector):
         :param scoring: accuracy classification score.
         :param test_size: represents the proportion of the dataset to include in the test split.
         :param random_state: controls the shuffling applied to the data before applying the split.
+        :param option: selection the proper feature set option (by score or by size).
+        :param best: if True, the best feature set will be selected. If False, the worst feature set will be selected.
 
         :return: None
+
+        :raises: ValueError: thrown when some arguments are not valid.
         """
 
         super(SBS, self).__init__(n_components, scoring)
         self.__estimator: Any = clone(estimator)
+
+        if type(test_size) == 'float' and 0.0 >= test_size >= 1.0 or type(test_size) == 'int' and test_size < 0:
+            raise ValueError('If float, test size must be between 0.0 and 1.0. If int, test size must be positive.')
         self.__test_size: float = test_size
-        self.__random_state: int = random_state
+
+        self.__random_state: Optional[Union[int, np.random.RandomState]] = random_state
         self.__feature_sets: Optional[OrdDict[int, FeatureSet]] = None
         self.__indices: Optional[Subset] = None
 
-    def fit(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> 'SBS':
+        if option not in POSSIBLE_SELECTION_OPTIONS:
+            raise ValueError(f"Possible selection options are: {', '.join(POSSIBLE_SELECTION_OPTIONS)}.")
+        self.__option = option
+
+        self.__best = best
+
+    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'SBS':
         """
         A method that fits the dataset in order to select features.
 
-        :param option: todo
         :param x: samples.
         :param y: class labels.
 
         :return: fitted selector.
+
+        :raises: RuntimeError: thrown when test size is bigger than number of samples.
         """
 
-        x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
-                                                            random_state=self.__random_state)
+        try:
+            x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=self.__test_size,
+                                                                random_state=self.__random_state)
+        except ValueError as val_err:
+            raise RuntimeError('Invalid test size.') from val_err
 
         dim: int = x_train.shape[1]
         indices: Subset = tuple(range(dim))
@@ -77,7 +99,7 @@ class SBS(Selector):
             sorted({len(s): (s, best_scores[i]) for i, s in enumerate(best_subsets)}.items(),
                    key=lambda t: t[0]))
 
-        self.select_feature_set(option)
+        self.__select_feature_set()
 
         return self
 
@@ -98,40 +120,34 @@ class SBS(Selector):
 
         return x[:, self.__indices]
 
-    def fit_transform(self, x: NDArray[Number], y: NDArray[Number], option: str = 'score') -> NDArray[Number]:
+    def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
         """
         A method that fits the dataset and applies transformation to a given samples.
 
         :param x: samples.
         :param y: class labels.
-        :param option: todo
 
         :return: samples projected onto a new space.
         """
 
-        self.fit(x, y, option)
+        self.fit(x, y)
 
         return self.transform(x)
 
-    def select_feature_set(self, option: str = 'score', best: bool = True) -> 'SBS':
-        if option == 'size':
+    def __select_feature_set(self) -> None:
+        """
+        A method that selects the proper feature set from the most perspective feature sets.
+
+        :return: None.
+        """
+
+        if self.__option == 'size':
             funcs = {True: max, False: min}
 
-            self.__indices = self.__feature_sets[funcs[best](self.__feature_sets.keys())][1]
+            self.__indices = self.__feature_sets[funcs[self.__best](self.__feature_sets.keys())][1]
         else:
-            # todo: find a way to get subset with the highest score
-            pass
-            # keys = self.__feature_sets.keys()
-            # items = sorted(self.__feature_sets.items(), key=lambda t: t[1])
-            #
-            # tmp = OrderedDict({subset[1]: tuple(subset[0], score) for score, subset in keys, items})
-            # 
-            # print(keys)
-            # print(items)
-            #
-            # # self.__indices = feature_sets_copy[0 if best else -1]
-
-        return self
+            sets = sorted(self.__feature_sets.values(), key=lambda t: t[1])
+            self.__indices = sets[-1 if self.__best else 0]
 
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
                           y_test: NDArray[Number], indices: Subset) -> float:
