@@ -63,7 +63,7 @@ class RFSelector(Selector):
         if self.__importances is None:
             raise RuntimeError('Feature importances are not calculated. Please use fit method first, or fit_transform.')
 
-        return self._indices[:self._n_components]
+        return x[:, self._indices[:self._n_components]]
 
     def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
         """
