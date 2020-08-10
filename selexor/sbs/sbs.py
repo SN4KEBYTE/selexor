@@ -17,6 +17,10 @@ POSSIBLE_SELECTION_OPTIONS: List[str] = ['score', 'size']
 
 
 class SBS(Selector):
+    """
+    Sequential backward selection algorithm.
+    """
+
     def __init__(self, estimator: Any, n_components: int, scoring: AccuracyScore = accuracy_score,
                  test_size: Proportion = 0.3,
                  random_state: RandomState = 0,
