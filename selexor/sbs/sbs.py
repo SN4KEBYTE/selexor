@@ -148,10 +148,10 @@ class SBS(Selector):
         if self.__option == 'size':
             funcs = {True: max, False: min}
 
-            self.__indices = self.__feature_sets[funcs[self.__best](self.__feature_sets.keys())][1]
+            self.__indices = self.__feature_sets[funcs[self.__best](self.__feature_sets.keys())][0]
         else:
             sets = sorted(self.__feature_sets.values(), key=lambda t: t[1])
-            self.__indices = sets[-1 if self.__best else 0]
+            self.__indices = sets[-1 if self.__best else 0][0]
 
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
                           y_test: NDArray[Number], indices: Subset) -> float:
