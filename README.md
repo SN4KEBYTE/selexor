@@ -14,7 +14,7 @@ selexor requires:
 - typish >= 1.7.0
 
 #### User installation
-The easiest way to install selexor is using ``pip ``.\
+The easiest way to install selexor is using ``pip``.\
 ``pip install selexor``
 
 # Development
