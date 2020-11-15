@@ -145,12 +145,20 @@ class SBS(Selector):
         :return: None.
         """
 
+        # if we want to choose the best feature set based on the size
         if self.__option == 'size':
+            # if self.__best is True, we will get the biggest feature set, smallest otherwise
             funcs = {True: max, False: min}
 
+            # find the proper size, get the appropriate feature set (we use [0] at the end because we also store
+            # accuracy score)
             self.__indices = self.__feature_sets[funcs[self.__best](self.__feature_sets.keys())][0]
         else:
+            # get feature sets sorted by accuracy score in ascending order
             sets = sorted(self.__feature_sets.values(), key=lambda t: t[1])
+
+            # if self.__best is True, we need the last feature set (with the biggest classification score), first
+            # otherwise
             self.__indices = sets[-1 if self.__best else 0][0]
 
     def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],

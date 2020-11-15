@@ -33,7 +33,7 @@ class PCA(LinearExtractor):
         cov_mat: NDArray[Number] = np.cov(x.T)
         eigen_vals, eigen_vecs = np.linalg.eigh(cov_mat)
 
-        self._calculate_variance_explained(eigen_vals)
+        self._calculate_explained_variance(eigen_vals)
         self._calculate_projection_matrix(eigen_vals, eigen_vecs)
 
         return self

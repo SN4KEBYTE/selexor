@@ -55,7 +55,7 @@ class LDA(LinearExtractor):
 
         eigen_vals, eigen_vecs = np.linalg.eig(np.linalg.inv(s_w).dot(s_b))
 
-        self._calculate_variance_explained(eigen_vals)
+        self._calculate_explained_variance(eigen_vals)
         self._calculate_projection_matrix(eigen_vals, eigen_vecs)
 
         return self

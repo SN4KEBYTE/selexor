@@ -24,7 +24,7 @@ class LinearExtractor(Base, ABC):
 
         super(LinearExtractor, self).__init__(n_components)
         self._w: Optional[NDArray[Number]] = None
-        self._variance_explained: Optional[List] = None
+        self._explained_variance: Optional[List] = None
 
     @abstractmethod
     def fit(self, *args, **kwargs):
@@ -88,7 +88,7 @@ class LinearExtractor(Base, ABC):
         new_features: List[NDArray[Number]] = [eigen_pairs[i][1][:, np.newaxis].real for i in range(self._n_components)]
         self._w = np.hstack(new_features)
 
-    def _calculate_variance_explained(self, eigen_vals: NDArray[Number]) -> None:
+    def _calculate_explained_variance(self, eigen_vals: NDArray[Number]) -> None:
         """
         A method that calculates explained variance using eigen values. It is stored in _variance_explained attribute.
 
@@ -97,8 +97,8 @@ class LinearExtractor(Base, ABC):
         :return: None.
         """
 
-        eigen_sum = np.sum(eigen_vals)
-        self._variance_explained = [val / eigen_sum for val in eigen_vals]
+        eigen_sum: Number = np.sum(eigen_vals)
+        self._explained_variance = [val / eigen_sum for val in eigen_vals]
 
     @property
     def projection_matrix(self) -> Optional[NDArray[Number]]:
@@ -111,11 +111,11 @@ class LinearExtractor(Base, ABC):
         return self._w
 
     @property
-    def variance_explained(self) -> Optional[List]:
+    def explained_variance(self) -> Optional[List]:
         """
         Explained variance.
 
         :return: explained variance or None in case fit (or fit_transform) was not called.
         """
 
-        return self._variance_explained
+        return self._explained_variance

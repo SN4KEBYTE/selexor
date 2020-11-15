@@ -25,7 +25,7 @@ class KernelExtractor(Base, ABC):
         """
 
         super(KernelExtractor, self).__init__(n_components)
-        self._gamma = gamma
+        self._gamma: float = gamma
         self._kernel_func: Callable = self.__get_kernel(kernel)
 
     @abstractmethod
@@ -76,7 +76,7 @@ class KernelExtractor(Base, ABC):
         :return: kernel function.
         """
 
-        kernels: Dict = {'rbf': self.__rbf}
+        kernels: Dict[str, Callable] = {'rbf': self.__rbf}
 
         return kernels[kernel]
 

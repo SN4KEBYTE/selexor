@@ -27,4 +27,4 @@ print(f'Accuracy score after LDA: {accuracy_score(y_pred=y_pred, y_true=y_test)}
 
 # you can get access to the projection matrix and explained variance
 print(f'Projection matrix: {lda.projection_matrix}')
-print(f'Explained variance: {lda.variance_explained}')
+print(f'Explained variance: {lda.explained_variance}')

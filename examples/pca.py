@@ -27,4 +27,4 @@ print(f'Accuracy score after PCA: {accuracy_score(y_pred=y_pred, y_true=y_test)}
 
 # you can get access to the projection matrix and explained variance
 print(f'Projection matrix: {pca.projection_matrix}')
-print(f'Explained variance: {pca.variance_explained}')
+print(f'Explained variance: {pca.explained_variance}')
