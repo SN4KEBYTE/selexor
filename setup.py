@@ -16,12 +16,9 @@ setup(
     long_description=open('README.md').read(),
     long_description_content_type='text/markdown',
 
-    packages=find_packages(),
-    install_requires=get_requirements(),
-
-    author='Timur Kasimov',
-    author_email='timurcat7@gmail.com',
     url='https://github.com/SN4KEBYTE/selexor',
+    author='Timur Kasimov',
+    license='GNU General Public License v3.0',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
@@ -38,4 +35,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Typing :: Typed',
     ],
+
+    packages=find_packages(),
+    install_requires=get_requirements(),
 )
