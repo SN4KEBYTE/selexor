@@ -5,17 +5,19 @@
 #### Dependencies
 selexor requires:
 - Python >= 3.6
-- joblib >= 0.16.0
-- nptyping >= 1.3.0
-- numpy >= 1.19.1
-- scikit-learn >= 0.23.2
-- scipy >= 1.5.2
-- threadpoolctl >= 2.1.0
-- typish >= 1.7.0
+- joblib==1.0.1
+- numpy==1.20.1
+- scikit-learn==0.24.1
+- scipy==1.6.0
+- threadpoolctl==2.1.0
 
 #### User installation
-The easiest way to install selexor is using ``pip``.\
-``pip install selexor``
+Clone GitHub repository:\
+``git clone https://github.com/SN4KEBYTE/selexor``  
+``cd selexor``
+
+Run setup.py script:\
+``python setup.py install``
 
 # Development
 #### Source code
