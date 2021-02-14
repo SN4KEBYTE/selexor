@@ -3,8 +3,6 @@ from itertools import combinations
 from typing import Any, List, OrderedDict as OrdDict, Optional, Union
 
 import numpy as np
-from nptyping import Number, Int
-from nptyping.ndarray import NDArray
 from sklearn.base import clone
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -58,7 +56,7 @@ class SBS(Selector):
 
         self.__best = best
 
-    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'SBS':
+    def fit(self, x: np.ndarray, y: np.ndarray) -> 'SBS':
         """
         A method that fits the dataset in order to select features.
 
@@ -92,7 +90,7 @@ class SBS(Selector):
                 scores.append(score)
                 subsets.append(p)
 
-            best: NDArray[Int] = np.argmax(scores)
+            best: np.ndarray = np.argmax(scores)
             indices = subsets[best]
             best_subsets.append(indices)
             dim -= 1
@@ -107,7 +105,7 @@ class SBS(Selector):
 
         return self
 
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that transforms the samples by selecting the most important features.
 
@@ -124,7 +122,7 @@ class SBS(Selector):
 
         return x[:, self.__indices]
 
-    def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies transformation to a given samples.
 
@@ -161,8 +159,8 @@ class SBS(Selector):
             # otherwise
             self.__indices = sets[-1 if self.__best else 0][0]
 
-    def __calculate_score(self, x_train: NDArray[Number], y_train: NDArray[Number], x_test: NDArray[Number],
-                          y_test: NDArray[Number], indices: Subset) -> float:
+    def __calculate_score(self, x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
+                          y_test: np.ndarray, indices: Subset) -> float:
         """
         A method that calculates classification score on provided features.
 

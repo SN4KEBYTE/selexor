@@ -1,8 +1,6 @@
 from typing import Callable, Dict, Optional
 
 import numpy as np
-from nptyping import Number
-from nptyping.ndarray import NDArray
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
@@ -30,9 +28,9 @@ class RFSelector(Selector):
 
         super(RFSelector, self).__init__(n_components, scoring)
         self.__forest: RandomForestClassifier = RandomForestClassifier(**estimator_params)
-        self.__importances: Optional[NDArray[Number]] = None
+        self.__importances: Optional[np.ndarray] = None
 
-    def fit(self, x: NDArray[Number], y: NDArray[Number]) -> 'RFSelector':
+    def fit(self, x: np.ndarray, y: np.ndarray) -> 'RFSelector':
         """
         A method that fits the dataset in order to select features.
 
@@ -43,12 +41,12 @@ class RFSelector(Selector):
         """
 
         self.__forest.fit(x, y)
-        self.__importances: NDArray[Number] = self.__forest.feature_importances_
-        self._indices: NDArray[Number] = np.argsort(self.__importances)[::-1]
+        self.__importances: np.ndarray = self.__forest.feature_importances_
+        self._indices: np.ndarray = np.argsort(self.__importances)[::-1]
 
         return self
 
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that transforms the samples by selecting the most important features.
 
@@ -65,7 +63,7 @@ class RFSelector(Selector):
 
         return x[:, self._indices[:self._n_components]]
 
-    def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies transformation to a given samples.
 
@@ -80,7 +78,7 @@ class RFSelector(Selector):
         return self.transform(x)
 
     @property
-    def feature_importances(self) -> Optional[NDArray[Number]]:
+    def feature_importances(self) -> Optional[np.ndarray]:
         """
         Feature importances.
 

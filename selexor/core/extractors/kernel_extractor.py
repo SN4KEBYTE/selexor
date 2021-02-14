@@ -2,8 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Dict, Callable
 
 import numpy as np
-from nptyping import Number
-from nptyping.ndarray import NDArray
 
 from selexor.core.base.base import Base
 
@@ -29,7 +27,7 @@ class KernelExtractor(Base, ABC):
         self._kernel_func: Callable = self.__get_kernel(kernel)
 
     @abstractmethod
-    def fit(self, x: NDArray[Number]):
+    def fit(self, x: np.ndarray) -> 'KernelExtractor':
         """
         A method that fits the dataset in order to extract features. This is an abstract method and
         must be implemented in subclasses.
@@ -42,7 +40,7 @@ class KernelExtractor(Base, ABC):
         pass
 
     @abstractmethod
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that applies dimensionality reduction to a given samples. This is an abstract method and
         must be implemented in subclasses.
@@ -55,7 +53,7 @@ class KernelExtractor(Base, ABC):
         pass
 
     @abstractmethod
-    def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies dimensionality reduction to a given samples. This is an abstract
         method and must be implemented in subclasses.
@@ -80,7 +78,7 @@ class KernelExtractor(Base, ABC):
 
         return kernels[kernel]
 
-    def __rbf(self, mat_dists: NDArray[Number]) -> NDArray[Number]:
+    def __rbf(self, mat_dists: np.ndarray) -> np.ndarray:
         """
         Gaussian radial basis function.
 

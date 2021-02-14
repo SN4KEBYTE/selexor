@@ -1,6 +1,5 @@
 from typing import Callable
 
-from nptyping import Number
-from nptyping.ndarray import NDArray
+import numpy as np
 
-AccuracyScore = Callable[[NDArray[Number], NDArray[Number]], float]
+AccuracyScore = Callable[[np.ndarray, np.ndarray], float]

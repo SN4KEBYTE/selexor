@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 
-from nptyping import Number
-from nptyping.ndarray import NDArray
+import numpy as np
 
 
 class Base(ABC):
@@ -21,7 +20,7 @@ class Base(ABC):
         self._n_components: int = n_components
 
     @abstractmethod
-    def fit(self, *args, **kwargs):
+    def fit(self, *args, **kwargs) -> 'Base':
         """
         A method that fits the dataset in order to select (or extract) features. This is an abstract method and must be
         implemented in subclasses.
@@ -35,7 +34,7 @@ class Base(ABC):
         pass
 
     @abstractmethod
-    def transform(self, *args, **kwargs) -> NDArray[Number]:
+    def transform(self, *args, **kwargs) -> np.ndarray:
         """
         A method that transforms the samples. This is an abstract method and must be implemented in subclasses.
 
@@ -48,7 +47,7 @@ class Base(ABC):
         pass
 
     @abstractmethod
-    def fit_transform(self, *args, **kwargs) -> NDArray[Number]:
+    def fit_transform(self, *args, **kwargs) -> np.ndarray:
         """
         A method that fits the dataset and applies transformation to a given samples. This is an abstract method and
         must be implemented in subclasses.

@@ -1,8 +1,6 @@
 from typing import List, Optional
 
 import numpy as np
-from nptyping import Number
-from nptyping.ndarray import NDArray
 from scipy.spatial.distance import pdist, squareform
 
 from selexor.core.extractors.kernel_extractor import KernelExtractor
@@ -25,11 +23,11 @@ class KernelPCA(KernelExtractor):
         """
 
         super(KernelPCA, self).__init__(n_components, gamma, kernel)
-        self.__x_train: Optional[NDArray[Number]] = None
-        self.__alphas: Optional[NDArray[Number]] = None
+        self.__x_train: Optional[np.ndarray] = None
+        self.__alphas: Optional[np.ndarray] = None
         self.__lambdas: Optional[List] = None
 
-    def fit(self, x: NDArray[Number]) -> 'KernelPCA':
+    def fit(self, x: np.ndarray) -> 'KernelPCA':
         """
         A method that fits the dataset in order to extract features.
 
@@ -41,13 +39,13 @@ class KernelPCA(KernelExtractor):
 
         self.__x_train = x
 
-        mat_dists: NDArray[Number] = squareform(pdist(x, 'sqeuclidean'))
+        mat_dists: np.ndarray = squareform(pdist(x, 'sqeuclidean'))
 
-        k: NDArray[Number] = self._kernel_func(mat_dists)
+        k: np.ndarray = self._kernel_func(mat_dists)
 
         n: int = k.shape[0]
-        ones_mat: NDArray[Number] = np.ones((n, n)) / n
-        k: NDArray[Number] = k - ones_mat.dot(k) - k.dot(ones_mat) + ones_mat.dot(k).dot(ones_mat)
+        ones_mat: np.ndarray = np.ones((n, n)) / n
+        k: np.ndarray = k - ones_mat.dot(k) - k.dot(ones_mat) + ones_mat.dot(k).dot(ones_mat)
 
         eigen_vals, eigen_vecs = np.linalg.eigh(k)
 
@@ -56,7 +54,7 @@ class KernelPCA(KernelExtractor):
 
         return self
 
-    def __project_sample(self, sample: NDArray[Number]) -> NDArray[Number]:
+    def __project_sample(self, sample: np.ndarray) -> np.ndarray:
         """
         A method that projects one sample to the new feature space.
 
@@ -65,12 +63,12 @@ class KernelPCA(KernelExtractor):
         :return: projected sample.
         """
 
-        dist: NDArray[Number] = np.array([np.sum(sample - row) ** 2 for row in self.__x_train])
-        k: NDArray[Number] = self._kernel_func(dist)
+        dist: np.ndarray = np.array([np.sum(sample - row) ** 2 for row in self.__x_train])
+        k: np.ndarray = self._kernel_func(dist)
 
         return k.dot(self.__alphas / self.__lambdas)
 
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that applies dimensionality reduction to a given samples.
 
@@ -83,7 +81,7 @@ class KernelPCA(KernelExtractor):
 
         return np.row_stack(x_transformed)
 
-    def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies dimensionality reduction to a given samples.
 

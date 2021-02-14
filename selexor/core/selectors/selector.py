@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from nptyping import Number
-from nptyping.ndarray import NDArray
+import numpy as np
 from sklearn.metrics import accuracy_score
 
 from selexor.core.base.base import Base
@@ -26,10 +25,10 @@ class Selector(Base, ABC):
 
         super(Selector, self).__init__(n_components)
         self._scoring: AccuracyScore = scoring
-        self._indices: Optional[NDArray[Number]] = None
+        self._indices: Optional[np.ndarray] = None
 
     @abstractmethod
-    def fit(self, x: NDArray[Number], y: NDArray[Number]):
+    def fit(self, x: np.ndarray, y: np.ndarray) -> 'Selector':
         """
         A method that fits the dataset in order to select features. This is an abstract method and must be implemented
         in subclasses.
@@ -43,7 +42,7 @@ class Selector(Base, ABC):
         pass
 
     @abstractmethod
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that transforms the samples by selecting the most important features. This is an abstract method and
         must be implemented in subclasses.
@@ -56,7 +55,7 @@ class Selector(Base, ABC):
         pass
 
     @abstractmethod
-    def fit_transform(self, x: NDArray[Number], y: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray, y: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies transformation to a given samples. This is an abstract method and
         must be implemented in subclasses.

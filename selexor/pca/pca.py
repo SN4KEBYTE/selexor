@@ -1,6 +1,4 @@
 import numpy as np
-from nptyping import Number
-from nptyping.ndarray import NDArray
 
 from selexor.core.extractors.linear_extractor import LinearExtractor
 
@@ -21,7 +19,7 @@ class PCA(LinearExtractor):
 
         super(PCA, self).__init__(n_components)
 
-    def fit(self, x: NDArray[Number]) -> 'PCA':
+    def fit(self, x: np.ndarray) -> 'PCA':
         """
         A method that fits the dataset in order to extract features.
 
@@ -30,7 +28,7 @@ class PCA(LinearExtractor):
         :return: fitted extractor.
         """
 
-        cov_mat: NDArray[Number] = np.cov(x.T)
+        cov_mat: np.ndarray = np.cov(x.T)
         eigen_vals, eigen_vecs = np.linalg.eigh(cov_mat)
 
         self._calculate_explained_variance(eigen_vals)
@@ -38,7 +36,7 @@ class PCA(LinearExtractor):
 
         return self
 
-    def fit_transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def fit_transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that fits the dataset and applies dimensionality reduction to a given samples.
 

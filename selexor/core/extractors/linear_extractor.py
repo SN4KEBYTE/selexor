@@ -1,9 +1,8 @@
 from abc import ABC, abstractmethod
+from numbers import Number
 from typing import List, Tuple, Optional
 
 import numpy as np
-from nptyping import Number
-from nptyping.ndarray import NDArray
 
 from selexor.core.base.base import Base
 
@@ -23,11 +22,11 @@ class LinearExtractor(Base, ABC):
         """
 
         super(LinearExtractor, self).__init__(n_components)
-        self._w: Optional[NDArray[Number]] = None
+        self._w: Optional[np.ndarray] = None
         self._explained_variance: Optional[List] = None
 
     @abstractmethod
-    def fit(self, *args, **kwargs):
+    def fit(self, *args, **kwargs) -> 'LinearExtractor':
         """
         A method that fits the dataset in order to extract features.
 
@@ -39,7 +38,7 @@ class LinearExtractor(Base, ABC):
 
         pass
 
-    def transform(self, x: NDArray[Number]) -> NDArray[Number]:
+    def transform(self, x: np.ndarray) -> np.ndarray:
         """
         A method that applies dimensionality reduction to a given samples.
 
@@ -57,7 +56,7 @@ class LinearExtractor(Base, ABC):
         return x.dot(self._w)
 
     @abstractmethod
-    def fit_transform(self, *args, **kwargs) -> NDArray[Number]:
+    def fit_transform(self, *args, **kwargs) -> np.ndarray:
         """
         A method that fits the dataset and applies dimensionality reduction to a given samples. This is an abstract
         method and must be implemented in subclasses.
@@ -70,7 +69,7 @@ class LinearExtractor(Base, ABC):
 
         pass
 
-    def _calculate_projection_matrix(self, eigen_vals: NDArray[Number], eigen_vecs: NDArray[Number]) -> None:
+    def _calculate_projection_matrix(self, eigen_vals: np.ndarray, eigen_vecs: np.ndarray) -> None:
         """
         A method that calculates projection matrix using eigen values and eigen vectors. Matrix is stored in _w
         attribute.
@@ -81,14 +80,14 @@ class LinearExtractor(Base, ABC):
         :return: None.
         """
 
-        eigen_pairs: List[Tuple[Number, NDArray[Number]]] = sorted(
+        eigen_pairs: List[Tuple[Number, np.ndarray]] = sorted(
             [(np.abs(eigen_vals[i]), eigen_vecs[:, i]) for i in range(len(eigen_vals))],
             key=lambda k: k[0], reverse=True)
 
-        new_features: List[NDArray[Number]] = [eigen_pairs[i][1][:, np.newaxis].real for i in range(self._n_components)]
+        new_features: List[np.ndarray] = [eigen_pairs[i][1][:, np.newaxis].real for i in range(self._n_components)]
         self._w = np.hstack(new_features)
 
-    def _calculate_explained_variance(self, eigen_vals: NDArray[Number]) -> None:
+    def _calculate_explained_variance(self, eigen_vals: np.ndarray) -> None:
         """
         A method that calculates explained variance using eigen values. It is stored in _variance_explained attribute.
 
@@ -101,7 +100,7 @@ class LinearExtractor(Base, ABC):
         self._explained_variance = [val / eigen_sum for val in eigen_vals]
 
     @property
-    def projection_matrix(self) -> Optional[NDArray[Number]]:
+    def projection_matrix(self) -> Optional[np.ndarray]:
         """
         Projection matrix.
 
