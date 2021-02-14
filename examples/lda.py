@@ -2,7 +2,7 @@ from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 
 from examples.load_wine import load_wine
-from selexor.lda.lda import LDA
+from selexor.lda import LDA
 
 # we will use Wine dataset for demonstration
 x_train_std, x_test_std, y_train, y_test = load_wine()
